@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fortnite Daily Shop</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/burbank-big-condensed');
+
+        body {
+            font-family: 'Burbank Big Condensed', sans-serif;
+            background: #001f3f;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+        }
+
+        #sidebar {
+            background: #1e293b;
+            color: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-right: 20px;
+            width: 500px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        #sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            color: #a78bfa;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        #sidebar ul li a {
+            color: #cbd5e0;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        #sidebar ul li a:hover {
+            background-color: #334155;
+        }
+
+        #shop-container {
+            flex-grow: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #shop-refresh-timer {
+            text-align: center;
+            color: #a78bfa;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .shop-category {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4338ca;
+        }
+
+        .shop-category h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #f0f8ff;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #a78bfa;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        @media (min-width: 960px) {
+            .item-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .item-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.15s ease-in-out;
+            text-align: center;
+        }
+
+        .item-card:hover {
+            transform: scale(1.05);
+        }
+
+        .item-card img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-details h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #e0f2fe;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+            color: #a5b4fc;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .loading {
+            color: #888;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Categories</h2>
+        <ul id="category-list">
+            <li class="loading">Loading categories...</li>
+        </ul>
+    </div>
+
+    <div id="shop-container">
+        <h1>Fortnite Daily Shop</h1>
+        <div id="shop-refresh-timer"></div>
+        <div id="shop-content"><div class="loading">Loading shop items...</div></div>
+    </div>
+
+    <script>
+        const API_KEY = "eadee0b6-665fb82d-1a863033-2f764868";
+        const categoryList = document.getElementById("category-list");
+        const shopContent = document.getElementById("shop-content");
+        const refreshTimer = document.getElementById("shop-refresh-timer");
+
+        const fetchData = async (url) => {
+            try {
+                const res = await fetch(url, {
+                    headers: { Authorization: API_KEY }
+                });
+                return await res.json();
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                return { error: true };
+            }
+        };
+
+        const createItemCard = (item) => {
+            const name = item.displayName || "Unknown";
+            const image = item.displayAssets?.[0]?.url || "";
+            const price = item.price ? `${item.price.finalPrice} V-Bucks` : "N/A";
+            const type = item.displayType || 'Unknown';
+            let rarity = item.rarity?.name || 'Unknown';
+
+            // Fix for "UNCOMMON" rarity
+            if (rarity === "UNCOMMON") {
+                rarity = "UNCOMMON"; // Or any other desired format, e.g., "Uncommon"
+            }
+
+            const card = document.createElement("div");
+            card.classList.add("item-card");
+            card.innerHTML = `
+                <img src="${image}" alt="${name}">
+                <div class="item-details">
+                    <h3>${name}</h3>
+                    <p>Type: ${type}</p>
+                    <p>Rarity: ${rarity}</p>
+                    <p>Price: ${price}</p>
+                </div>
+            `;
+            return card;
+        };
+
+        const loadDailyShop = async () => {
+            const data = await fetchData("https://fortniteapi.io/v2/shop?lang=en");
+
+            shopContent.innerHTML = "";
+            categoryList.innerHTML = ""; // Clear loading message
+
+            if (!data || !data.shop || data.shop.length === 0) {
+                shopContent.innerHTML = "<p class='loading'>No items found in the shop.</p>";
+                categoryList.innerHTML = "<li>No categories available.</li>";
+                return;
+            }
+
+            const categorizedShop = {};
+            const categories = [];
+
+            data.shop.forEach(item => {
+                const categoryName = item.section?.name || "Featured";
+                if (!categorizedShop[categoryName]) {
+                    categorizedShop[categoryName] = [];
+                    categories.push(categoryName);
+                }
+                categorizedShop[categoryName].push(item);
+            });
+
+            categories.forEach(categoryName => {
+                const categoryId = categoryName.toLowerCase().replace(/ /g, '-'); // Create a unique ID
+                const categoryDiv = document.createElement("div");
+                categoryDiv.classList.add("shop-category");
+                categoryDiv.id = categoryId; // Set the ID for scrolling
+                categoryDiv.innerHTML = `<h2>${categoryName}</h2><div class="item-grid"></div>`;
+                const itemGridDiv = categoryDiv.querySelector(".item-grid");
+
+                categorizedShop[categoryName].forEach(item => {
+                    const card = createItemCard(item);
+                    itemGridDiv.appendChild(card);
+                });
+                shopContent.appendChild(categoryDiv);
+
+                // Add category to the sidebar menu
+                const listItem = document.createElement("li");
+                const link = document.createElement("a");
+                link.href = `#${categoryId}`;
+                link.textContent = categoryName;
+                listItem.appendChild(link);
+                categoryList.appendChild(listItem);
+
+                // Add smooth scrolling behavior
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById(categoryId).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        };
+
+        const updateTimeRemaining = () => {
+            const now = new Date();
+            const easternTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+            const refreshHourUTC = 0; // 00:00 UTC
+            const nextRefreshEastern = new Date(easternTime);
+
+            nextRefreshEastern.setUTCHours(refreshHourUTC - 4, 0, 0, 0); // UTC-4 for EDT
+
+            if (easternTime >= nextRefreshEastern) {
+                nextRefreshEastern.setDate(nextRefreshEastern.getDate() + 1);
+            }
+
+            const timeLeftEastern = nextRefreshEastern.getTime() - easternTime.getTime();
+
+            const hoursEastern = Math.floor((timeLeftEastern % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutesEastern = Math.floor((timeLeftEastern % (1000 * 60 * 60)) / (1000 * 60));
+            const secondsEastern = Math.floor((timeLeftEastern % (1000 * 60)) / 1000);
+
+            refreshTimer.textContent = `Shop Refresh in: ${hoursEastern.toString().padStart(2, '0')}h ${minutesEastern.toString().padStart(2, '0')}m ${secondsEastern.toString().padStart(2, '0')}s (ET)`;
+        };
+
+        // Update the timer every second
+        setInterval(updateTimeRemaining, 1000);
+
+        // Load initial data
+        loadDailyShop();
+        updateTimeRemaining(); // Initial call to set the timer immediately
+    </script>
+
+</body>
+</html>
