@@ -35,6 +35,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: var(--font-secondary);
             background-color: var(--color-background);
@@ -197,6 +201,39 @@
             font-size: 1.2rem;
             color: var(--color-text-dark);
         }
+        
+        /* --- Scroll to Top Button --- */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            border: none;
+            background-color: var(--color-primary);
+            color: white;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: visibility 0.3s, opacity 0.3s, transform 0.3s;
+        }
+
+        #scrollToTopBtn.visible {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #scrollToTopBtn:hover {
+            background-color: var(--color-secondary);
+        }
 
         /* --- Tablet & Medium Screens (min-width: 768px) --- */
         @media (min-width: 768px) {
@@ -213,20 +250,18 @@
                 top: 2rem;
                 height: calc(100vh - 4rem);
                 margin-bottom: 0;
-                /* ** FIX: Use flexbox for robust vertical layout ** */
                 display: flex;
                 flex-direction: column;
             }
             
             #sidebar h2 {
-                flex-shrink: 0; /* Prevent title from shrinking */
+                flex-shrink: 0;
             }
 
             #category-list {
-                /* ** FIX: Revert to block and allow vertical scroll ** */
                 display: block;
-                flex-grow: 1; /* Take available space */
-                overflow-y: auto; /* Allow scrolling */
+                flex-grow: 1;
+                overflow-y: auto;
                 overflow-x: hidden;
                 padding-bottom: 0;
             }
@@ -276,6 +311,11 @@
             </div>
         </main>
     </div>
+    
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" title="Go to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+    </button>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -287,9 +327,10 @@
             const categoryList = document.getElementById("category-list");
             const shopContent = document.getElementById("shop-content");
             const refreshTimer = document.getElementById("shop-refresh-timer");
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 
             // --- FUNCTIONS ---
-
+            
             const fetchData = async () => {
                 try {
                     const response = await fetch(API_URL, {
@@ -392,6 +433,22 @@
 
                 refreshTimer.textContent = `Shop Refresh in: ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
             };
+            
+            // --- SCROLL TO TOP LOGIC ---
+            const handleScroll = () => {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            };
+
+            const scrollToTop = () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            };
 
             const main = async () => {
                 const data = await fetchData();
@@ -400,6 +457,10 @@
                 }
                 updateRefreshTimer();
                 setInterval(updateRefreshTimer, 1000);
+
+                // Add event listeners for scroll-to-top functionality
+                window.addEventListener('scroll', handleScroll);
+                scrollToTopBtn.addEventListener('click', scrollToTop);
             };
 
             main();
