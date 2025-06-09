@@ -1,307 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
     <meta charset="UTF-8">
-    <title>Fortnite Daily Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Daily Shop - New Design</title>
+    
+    <!-- Google Fonts and CDN Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/burbank-big-condensed" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.cdnfonts.com/css/burbank-big-condensed');
+        /* ------------------------- */
+        /* --- NEW MODERN CSS --- */
+        /* ------------------------- */
+        
+        /* --- Base & Variables --- */
+        :root {
+            --color-background: #111827; /* Very Dark Blue */
+            --color-surface: #1F2937;    /* Dark Grey Blue */
+            --color-primary: #8B5CF6;    /* Vivid Purple */
+            --color-secondary: #3B82F6;  /* Bright Blue */
+            --color-text-light: #F9FAFB; /* Almost White */
+            --color-text-dark: #9CA3AF;  /* Grey */
+            --font-primary: 'Burbank Big Condensed', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+        }
+
+        /* --- General Reset & Body --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Burbank Big Condensed', sans-serif;
-            background: #001f3f;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
+            font-family: var(--font-secondary);
+            background-color: var(--color-background);
+            color: var(--color-text-light);
             display: flex;
+            flex-direction: column; /* Mobile first: sidebar stacks on top */
         }
 
-        #sidebar {
-            background: #1e293b;
-            color: #f0f8ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-right: 20px;
-            width: 500px;
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+        /* --- Layout Containers --- */
+        #page-container {
+            display: flex;
+            flex-direction: column; /* Mobile: sidebar on top */
+            padding: 1rem;
+            width: 100%;
         }
-
-        #sidebar::-webkit-scrollbar {
-            display: none;
-        }
-
-        #sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            color: #a78bfa;
-        }
-
-        #sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #sidebar ul li {
-            margin-bottom: 10px;
-        }
-
-        #sidebar ul li a {
-            color: #cbd5e0;
-            text-decoration: none;
-            display: block;
-            padding: 8px 12px;
-            border-radius: 5px;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        #sidebar ul li a:hover {
-            background-color: #334155;
-        }
-
+        
         #shop-container {
-            flex-grow: 1;
+            width: 100%;
         }
 
+        /* --- Typography --- */
         h1 {
+            font-family: var(--font-primary);
+            font-size: 2.5rem;
             text-align: center;
-            margin-bottom: 15px;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: var(--color-text-light);
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px var(--color-primary);
         }
 
         #shop-refresh-timer {
             text-align: center;
-            color: #a78bfa;
-            font-size: 1em;
-            margin-bottom: 20px;
+            color: var(--color-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
         }
 
-        .shop-category {
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4338ca;
+        /* --- Sidebar & Categories (Mobile First) --- */
+        #sidebar {
+            width: 100%;
+            margin-bottom: 2rem;
         }
 
+        #sidebar h2 {
+            font-family: var(--font-primary);
+            font-size: 1.5rem;
+            color: var(--color-text-light);
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #category-list {
+            list-style: none;
+            display: flex;
+            overflow-x: auto; /* Allow horizontal scrolling on mobile */
+            padding-bottom: 1rem; /* Space for scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-primary) var(--color-surface);
+        }
+        
+        #category-list::-webkit-scrollbar { height: 6px; }
+        #category-list::-webkit-scrollbar-track { background: var(--color-surface); border-radius: 3px; }
+        #category-list::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 3px; }
+
+        #category-list li {
+            flex-shrink: 0; /* Prevent items from shrinking */
+        }
+
+        #category-list li a {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            margin-right: 0.75rem;
+            background-color: var(--color-surface);
+            color: var(--color-text-light);
+            text-decoration: none;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background-color 0.2s, color 0.2s, transform 0.2s;
+        }
+
+        #category-list li a:hover {
+            background-color: var(--color-primary);
+            color: var(--color-text-light);
+            transform: translateY(-2px);
+        }
+
+        /* --- Shop Sections & Item Grid --- */
         .shop-category h2 {
-            margin-top: 0;
-            font-size: 1.5em;
-            color: #f0f8ff;
-            padding-bottom: 8px;
-            border-bottom: 3px solid #a78bfa;
-            display: inline-block;
-            margin-bottom: 15px;
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 1.5rem;
+            scroll-margin-top: 1rem; /* Add space when scrolling to an anchor */
         }
-
+        
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.5rem;
         }
 
-        @media (min-width: 960px) {
-            .item-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
+        /* --- Item Card Design --- */
         .item-card {
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: linear-gradient(145deg, #2a374a, #1f2937);
+            border: 1px solid #374151;
             border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            transition: transform 0.15s ease-in-out;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
         }
 
         .item-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
         }
 
         .item-card img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background-color: var(--color-background);
+        }
+
+        .item-details {
+            padding: 1rem;
         }
 
         .item-details h3 {
-            margin-top: 0;
-            font-size: 1.1em;
-            color: #e0f2fe;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            margin-bottom: 5px;
+            font-family: var(--font-secondary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-text-light);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 0.25rem;
         }
 
         .item-details p {
-            margin: 5px 0;
-            color: #a5b4fc;
-            font-size: 0.9em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.9rem;
+            color: var(--color-text-dark);
+            margin: 0.25rem 0;
+        }
+        
+        .item-details p strong {
+            color: var(--color-secondary);
+            font-weight: 700;
         }
 
-        .loading {
-            color: #888;
-            font-style: italic;
+        /* --- Loading / Error States --- */
+        .loading, .error {
             text-align: center;
-            padding: 20px;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--color-text-dark);
         }
+
+        /* --- Tablet & Medium Screens (min-width: 768px) --- */
+        @media (min-width: 768px) {
+            #page-container {
+                flex-direction: row;
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            #sidebar {
+                width: 280px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 2rem;
+                height: calc(100vh - 4rem);
+                margin-bottom: 0;
+                /* ** FIX: Use flexbox for robust vertical layout ** */
+                display: flex;
+                flex-direction: column;
+            }
+            
+            #sidebar h2 {
+                flex-shrink: 0; /* Prevent title from shrinking */
+            }
+
+            #category-list {
+                /* ** FIX: Revert to block and allow vertical scroll ** */
+                display: block;
+                flex-grow: 1; /* Take available space */
+                overflow-y: auto; /* Allow scrolling */
+                overflow-x: hidden;
+                padding-bottom: 0;
+            }
+
+            #category-list li {
+                width: 100%;
+            }
+
+            #category-list li a {
+                margin-right: 0;
+                margin-bottom: 0.75rem;
+            }
+
+            .item-grid {
+                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        /* --- Desktop & Large Screens (min-width: 1280px) --- */
+        @media (min-width: 1280px) {
+            h1 { font-size: 3.5rem; }
+            
+            .item-grid {
+                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="sidebar">
-        <h2>Categories</h2>
-        <ul id="category-list">
-            <li class="loading">Loading categories...</li>
-        </ul>
-    </div>
+    <div id="page-container">
+        <!-- Sidebar for navigation between categories -->
+        <aside id="sidebar">
+            <h2>Categories</h2>
+            <ul id="category-list">
+                <li class="loading">Loading...</li>
+            </ul>
+        </aside>
 
-    <div id="shop-container">
-        <h1>Fortnite Daily Shop</h1>
-        <div id="shop-refresh-timer"></div>
-        <div id="shop-content"><div class="loading">Loading shop items...</div></div>
+        <!-- Main container for the shop content -->
+        <main id="shop-container">
+            <h1>Fortnite Daily Shop</h1>
+            <div id="shop-refresh-timer"></div>
+            <div id="shop-content">
+                <div class="loading">Loading shop items...</div>
+            </div>
+        </main>
     </div>
 
     <script>
-        const API_KEY = "eadee0b6-665fb82d-1a863033-2f764868";
-        const categoryList = document.getElementById("category-list");
-        const shopContent = document.getElementById("shop-content");
-        const refreshTimer = document.getElementById("shop-refresh-timer");
+        document.addEventListener("DOMContentLoaded", () => {
+            // --- CONFIGURATION ---
+            const API_KEY = "eadee0b6-665fb82d-1a863033-2f764868"; // IMPORTANT: In a real app, hide this key on a server.
+            const API_URL = "https://fortniteapi.io/v2/shop?lang=en";
 
-        const fetchData = async (url) => {
-            try {
-                const res = await fetch(url, {
-                    headers: { Authorization: API_KEY }
-                });
-                return await res.json();
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                return { error: true };
-            }
-        };
+            // --- DOM ELEMENTS ---
+            const categoryList = document.getElementById("category-list");
+            const shopContent = document.getElementById("shop-content");
+            const refreshTimer = document.getElementById("shop-refresh-timer");
 
-        const createItemCard = (item) => {
-            const name = item.displayName || "Unknown";
-            const image = item.displayAssets?.[0]?.url || "";
-            const price = item.price ? `${item.price.finalPrice} V-Bucks` : "N/A";
-            const type = item.displayType || 'Unknown';
-            let rarity = item.rarity?.name || 'Unknown';
+            // --- FUNCTIONS ---
 
-            // Fix for "UNCOMMON" rarity
-            if (rarity === "UNCOMMON") {
-                rarity = "UNCOMMON"; // Or any other desired format, e.g., "Uncommon"
-            }
-
-            const card = document.createElement("div");
-            card.classList.add("item-card");
-            card.innerHTML = `
-                <img src="${image}" alt="${name}">
-                <div class="item-details">
-                    <h3>${name}</h3>
-                    <p>Type: ${type}</p>
-                    <p>Rarity: ${rarity}</p>
-                    <p>Price: ${price}</p>
-                </div>
-            `;
-            return card;
-        };
-
-        const loadDailyShop = async () => {
-            const data = await fetchData("https://fortniteapi.io/v2/shop?lang=en");
-
-            shopContent.innerHTML = "";
-            categoryList.innerHTML = ""; // Clear loading message
-
-            if (!data || !data.shop || data.shop.length === 0) {
-                shopContent.innerHTML = "<p class='loading'>No items found in the shop.</p>";
-                categoryList.innerHTML = "<li>No categories available.</li>";
-                return;
-            }
-
-            const categorizedShop = {};
-            const categories = [];
-
-            data.shop.forEach(item => {
-                const categoryName = item.section?.name || "Featured";
-                if (!categorizedShop[categoryName]) {
-                    categorizedShop[categoryName] = [];
-                    categories.push(categoryName);
+            const fetchData = async () => {
+                try {
+                    const response = await fetch(API_URL, {
+                        headers: { 'Authorization': API_KEY }
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Error fetching shop data:", error);
+                    shopContent.innerHTML = `<p class="error">Could not load shop data. Please try again later.</p>`;
+                    categoryList.innerHTML = `<li class="error">Categories unavailable.</li>`;
+                    return null;
                 }
-                categorizedShop[categoryName].push(item);
-            });
+            };
 
-            categories.forEach(categoryName => {
-                const categoryId = categoryName.toLowerCase().replace(/ /g, '-'); // Create a unique ID
-                const categoryDiv = document.createElement("div");
-                categoryDiv.classList.add("shop-category");
-                categoryDiv.id = categoryId; // Set the ID for scrolling
-                categoryDiv.innerHTML = `<h2>${categoryName}</h2><div class="item-grid"></div>`;
-                const itemGridDiv = categoryDiv.querySelector(".item-grid");
+            const createItemCard = (item) => {
+                const name = item.displayName || "N/A";
+                const image = item.displayAssets?.[0]?.full_background || item.displayAssets?.[0]?.url || ''; 
+                const price = item.price?.finalPrice ? `${item.price.finalPrice} V-Bucks` : "N/A";
+                const type = item.displayType || 'N/A';
+                
+                const card = document.createElement("div");
+                card.className = "item-card";
+                card.innerHTML = `
+                    <img src="${image}" alt="${name}" loading="lazy" onerror="this.style.display='none'">
+                    <div class="item-details">
+                        <h3>${name}</h3>
+                        <p>${type}</p>
+                        <p><strong>${price}</strong></p>
+                    </div>
+                `;
+                return card;
+            };
+            
+            const renderShop = (shopItems) => {
+                shopContent.innerHTML = "";
+                categoryList.innerHTML = "";
 
-                categorizedShop[categoryName].forEach(item => {
-                    const card = createItemCard(item);
-                    itemGridDiv.appendChild(card);
-                });
-                shopContent.appendChild(categoryDiv);
+                if (!shopItems || shopItems.length === 0) {
+                    shopContent.innerHTML = "<p class='loading'>No items found in the shop.</p>";
+                    return;
+                }
+                
+                const categorizedShop = shopItems.reduce((acc, item) => {
+                    const categoryName = item.section?.name || "Featured";
+                    if (!acc[categoryName]) {
+                        acc[categoryName] = [];
+                    }
+                    acc[categoryName].push(item);
+                    return acc;
+                }, {});
 
-                // Add category to the sidebar menu
-                const listItem = document.createElement("li");
-                const link = document.createElement("a");
-                link.href = `#${categoryId}`;
-                link.textContent = categoryName;
-                listItem.appendChild(link);
-                categoryList.appendChild(listItem);
+                for (const categoryName in categorizedShop) {
+                    const categoryId = `category-${categoryName.toLowerCase().replace(/\s+/g, '-')}`;
+                    
+                    const categorySection = document.createElement("section");
+                    categorySection.className = "shop-category";
+                    categorySection.id = categoryId;
+                    
+                    const categoryTitle = document.createElement("h2");
+                    categoryTitle.textContent = categoryName;
+                    
+                    const itemGrid = document.createElement("div");
+                    itemGrid.className = "item-grid";
 
-                // Add smooth scrolling behavior
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById(categoryId).scrollIntoView({ behavior: 'smooth' });
-                });
-            });
-        };
+                    categorizedShop[categoryName].forEach(item => {
+                        const card = createItemCard(item);
+                        itemGrid.appendChild(card);
+                    });
 
-        const updateTimeRemaining = () => {
-            const now = new Date();
-            const easternTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-            const refreshHourUTC = 0; // 00:00 UTC
-            const nextRefreshEastern = new Date(easternTime);
+                    categorySection.appendChild(categoryTitle);
+                    categorySection.appendChild(itemGrid);
+                    shopContent.appendChild(categorySection);
 
-            nextRefreshEastern.setUTCHours(refreshHourUTC - 4, 0, 0, 0); // UTC-4 for EDT
+                    const listItem = document.createElement("li");
+                    const link = document.createElement("a");
+                    link.href = `#${categoryId}`;
+                    link.textContent = categoryName;
+                    listItem.appendChild(link);
+                    categoryList.appendChild(listItem);
+                }
+            };
+            
+            const updateRefreshTimer = () => {
+                const now = new Date();
+                const nextRefresh = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+                
+                const timeLeft = nextRefresh - now;
 
-            if (easternTime >= nextRefreshEastern) {
-                nextRefreshEastern.setDate(nextRefreshEastern.getDate() + 1);
-            }
+                if (timeLeft < 0) {
+                    refreshTimer.textContent = "Shop is refreshing...";
+                    return;
+                }
 
-            const timeLeftEastern = nextRefreshEastern.getTime() - easternTime.getTime();
+                const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            const hoursEastern = Math.floor((timeLeftEastern % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutesEastern = Math.floor((timeLeftEastern % (1000 * 60 * 60)) / (1000 * 60));
-            const secondsEastern = Math.floor((timeLeftEastern % (1000 * 60)) / 1000);
+                refreshTimer.textContent = `Shop Refresh in: ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+            };
 
-            refreshTimer.textContent = `Shop Refresh in: ${hoursEastern.toString().padStart(2, '0')}h ${minutesEastern.toString().padStart(2, '0')}m ${secondsEastern.toString().padStart(2, '0')}s (ET)`;
-        };
+            const main = async () => {
+                const data = await fetchData();
+                if (data && data.shop) {
+                    renderShop(data.shop);
+                }
+                updateRefreshTimer();
+                setInterval(updateRefreshTimer, 1000);
+            };
 
-        // Update the timer every second
-        setInterval(updateTimeRemaining, 1000);
-
-        // Load initial data
-        loadDailyShop();
-        updateTimeRemaining(); // Initial call to set the timer immediately
+            main();
+        });
     </script>
 
 </body>
