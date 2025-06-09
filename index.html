@@ -81,7 +81,15 @@
         /* --- Sidebar & Categories (Mobile First) --- */
         #sidebar {
             width: 100%;
-            margin-bottom: 2rem;
+            /* Make sidebar sticky on mobile */
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: var(--color-background);
+            /* Adjustments for sticky layout */
+            margin: 0 -1rem 2rem -1rem;
+            padding: 1rem 1rem 0 1rem;
+            width: calc(100% + 2rem);
         }
 
         #sidebar h2 {
@@ -135,7 +143,7 @@
             font-size: 2rem;
             color: var(--color-primary);
             margin-bottom: 1.5rem;
-            scroll-margin-top: 1rem; /* Add space when scrolling to an anchor */
+            scroll-margin-top: 9rem; /* Increased space to prevent overlap from sticky header */
         }
         
         .item-grid {
@@ -249,9 +257,14 @@
                 position: sticky;
                 top: 2rem;
                 height: calc(100vh - 4rem);
-                margin-bottom: 0;
                 display: flex;
                 flex-direction: column;
+                /* Reset mobile sticky styles */
+                background-color: transparent;
+                margin: 0;
+                padding: 0;
+                width: 280px;
+                z-index: auto;
             }
             
             #sidebar h2 {
